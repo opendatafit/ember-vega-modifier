@@ -781,7 +781,7 @@ export const SPEC: Spec = {
   "autosize": "fit"
 };
 
-export const DATA_1: Record<string, DataArray> = {
+export const DATA_1: DataRecord = {
   'sas_result_data': [
     {
       "dlam": null,

@@ -27,13 +27,14 @@ export default class Application extends Controller {
     this.specType = SPEC_TYPE;
     this.config = CONFIG;
     this.data = DATA_1;
-
-    console.log('Constructor loaded data:', this.data);
   }
 
   @action updateData() {
     this.data = DATA_2;
-    console.log('Data after update:', this.data);
+    // TODO: Hack to workaround tracked property not being fired by this.data
+    // change
+    this.specType = '';
+    this.specType = 'vega';
   }
 }
 
