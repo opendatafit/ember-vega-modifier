@@ -8494,10 +8494,6 @@ onetime@^5.1.0, onetime@^5.1.2:
   dependencies:
     mimic-fn "^2.1.0"
 
-"opendatafit-types@git+ssh://git@github.com:opendatafit/opendatafit-types.git":
-  version "0.0.1"
-  resolved "git+ssh://git@github.com:opendatafit/opendatafit-types.git#a83029dcb4074a3555b7c1ed6249f0c9ba9afa3a"
-
 optionator@^0.9.1:
   version "0.9.1"
   resolved "https://registry.yarnpkg.com/optionator/-/optionator-0.9.1.tgz#4f236a6373dae0566a6d43e1326674f50c291499"

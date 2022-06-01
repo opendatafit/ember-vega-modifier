@@ -7,8 +7,6 @@ import * as Vega from 'vega';
 import * as VegaLite from 'vega-lite';
 import * as VegaTooltip from 'vega-tooltip';
 
-import { Resource, View } from 'opendatafit-types';
-
 
 const DEFAULT_CONFIG: Vega.Config = {
   background: '#fff',

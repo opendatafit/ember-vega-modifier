@@ -35,7 +35,6 @@
     "ember-cli-typescript": "^5.1.0",
     "ember-lodash": "^4.19.5",
     "ember-modifier": "^3.2.7",
-    "opendatafit-types": "git+ssh://git@github.com:opendatafit/opendatafit-types.git",
     "vega": "^5.22.1",
     "vega-lite": "^5.2.0",
     "vega-tooltip": "^0.28.0"
