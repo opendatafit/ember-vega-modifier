@@ -1,9 +1,11 @@
 import Modifier, { ArgsFor, PositionalArgs, NamedArgs } from 'ember-modifier';
-// import { registerDestructor } from '@ember/destroyable';
+import { registerDestructor } from '@ember/destroyable';
+
+import { isEmpty } from 'lodash';
+
 import * as Vega from 'vega';
 import * as VegaLite from 'vega-lite';
 import * as VegaTooltip from 'vega-tooltip';
-import { isEmpty } from 'lodash';
 
 import { Resource, View } from 'opendatafit-types';
 
@@ -79,6 +81,13 @@ export default class VegaModifier extends Modifier<VegaModifierSignature> {
     args: ArgsFor<VegaModifierSignature>
   ) {
     super(owner, args);
+    registerDestructor(this, this.destructor);
+  }
+
+  destructor() {
+    if (this._vegaView) {
+      this._vegaView.finalize();
+    }
   }
 
   async modify(
@@ -89,6 +98,23 @@ export default class VegaModifier extends Modifier<VegaModifierSignature> {
     if (!element) {
       throw new Error('Vega has no element');
     }
+
+    if (!this._vegaView) {
+      // Create new Vega.View instance
+      await this._createView(element, args);
+      await this._populateData(args);
+    } else {
+      // Update data only
+      // TODO: Handle changes to config
+      await this._populateData(args);
+    }
+  }
+
+  private async _createView(
+    element: Element,
+    args: NamedArgs<VegaModifierSignature>
+  ): Promise<void> {
+    element.classList.add('vega-view-modifier');
 
     let tooltipHandler = new VegaTooltip.Handler();
 
@@ -107,47 +133,27 @@ export default class VegaModifier extends Modifier<VegaModifierSignature> {
     }
 
     this._vegaView = new Vega.View(Vega.parse(viewSpec, config), {
-      renderer: 'svg', // Renderer (canvas or svg)
-      container: this.element, // Parent DOM container
-      hover: true, // Enable hover processing
+      renderer: 'svg',
+      container: element,
+      hover: true,
       // autosize: { type: 'fit', resize: true },
       tooltip: tooltipHandler.call,
     });
 
     await this._vegaView.runAsync();
 
-    // await this.populateData();
-    for (const name of Object.keys(args.data)) {
-      this._vegaView.data(name, args.data[name]);
-    }
-    await this._vegaView.runAsync();
-
-    this.element.classList.add('vega-view-modifier');
-
     // TODO: Temporary bug fix for incorrect chart sizing on load before
     // first resize
     window.dispatchEvent(new Event('resize'));
   }
 
-  private _setup(): void {
-  }
-
-  willDestroy() {
-    if (this._vegaView) {
-      this._vegaView.finalize();
+  private async _populateData(
+    args: NamedArgs<VegaModifierSignature>
+  ): Promise<void> {
+    for (const name of Object.keys(args.data)) {
+      this._vegaView.data(name, args.data[name]);
     }
 
-    this.element.classList.remove('vega-view-modifier');
+    await this._vegaView.runAsync();
   }
-
-  // async didUpdateArguments() {
-  //   if (!this._vegaView) {
-  //     await this._setup();
-  //   } else {
-  //     // Already loaded, we don't expect the view/config to change
-  //     // Just need to update data package
-  //     await this.populateData();
-  //     await this._vegaView.runAsync();
-  //   }
-  // }
 }
