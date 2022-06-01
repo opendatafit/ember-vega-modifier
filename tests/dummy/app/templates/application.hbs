@@ -1,5 +1,20 @@
-{{page-title "Dummy"}}
+<h2 id="title">ember-vega-modifier test</h2>
 
-<h2 id="title">Welcome to Ember</h2>
+<div
+  {{vega
+    specType=this.specType
+    spec=this.spec
+    data=this.data
+    config=this.config
+  }}
+  style="height: 100%; min-height: 400px; max-height: 100%;"
+>
+</div>
+
+<div>
+  <button {{on "click" this.updateData}}>
+    Update data
+  </button>
+</div>
 
 {{outlet}}
