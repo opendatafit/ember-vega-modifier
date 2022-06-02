@@ -68,15 +68,15 @@ interface VegaArgs {
   }
 }
 
-type VegaModifierSignature = VegaArgs | VegaLiteArgs;
+type VegaModifierArgs = VegaArgs | VegaLiteArgs;
 
 
-export default class VegaModifier extends Modifier<VegaModifierSignature> {
+export default class VegaModifier extends Modifier<VegaModifierArgs> {
   private _vegaView!: Vega.View;
 
   constructor(
     owner: unknown,
-    args: ArgsFor<VegaModifierSignature>
+    args: ArgsFor<VegaModifierArgs>
   ) {
     super(owner, args);
     registerDestructor(this, this.destructor);
@@ -90,8 +90,8 @@ export default class VegaModifier extends Modifier<VegaModifierSignature> {
 
   async modify(
     element: Element,
-    positionalArgs: PositionalArgs<VegaModifierSignature>,
-    args: NamedArgs<VegaModifierSignature>
+    positionalArgs: PositionalArgs<VegaModifierArgs>,
+    args: NamedArgs<VegaModifierArgs>
   ) {
     if (!element) {
       throw new Error('Vega has no element');
@@ -110,7 +110,7 @@ export default class VegaModifier extends Modifier<VegaModifierSignature> {
 
   private async _createView(
     element: Element,
-    args: NamedArgs<VegaModifierSignature>
+    args: NamedArgs<VegaModifierArgs>
   ): Promise<void> {
     element.classList.add('vega-view-modifier');
 
@@ -146,7 +146,7 @@ export default class VegaModifier extends Modifier<VegaModifierSignature> {
   }
 
   private async _populateData(
-    args: NamedArgs<VegaModifierSignature>
+    args: NamedArgs<VegaModifierArgs>
   ): Promise<void> {
     for (const name of Object.keys(args.data)) {
       this._vegaView.data(name, args.data[name]);
