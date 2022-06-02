@@ -83,7 +83,7 @@ export default class VegaModifier extends Modifier<VegaModifierArgs> {
   }
 
   destructor() {
-    if (this._vegaView) {
+    if (this && this._vegaView) {
       this._vegaView.finalize();
     }
   }
