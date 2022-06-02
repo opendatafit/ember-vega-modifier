@@ -99,16 +99,12 @@ export default class VegaModifier extends Modifier<VegaModifierArgs> {
 
     if (!this._vegaView) {
       // Create new Vega.View instance
-      console.log('before createView');
       await this._createView(element, args);
 
-      console.log('before populateData');
       await this._populateData(args);
     } else {
       // Update data only
       // TODO: Handle changes to config
-      
-      console.log('update before populateData');
       await this._populateData(args);
     }
   }
@@ -135,7 +131,6 @@ export default class VegaModifier extends Modifier<VegaModifierArgs> {
       viewSpec = args.spec
     }
 
-    console.log('before Vega.View init');
     this._vegaView = new Vega.View(Vega.parse(viewSpec, config), {
       renderer: 'svg',
       container: element,
@@ -155,7 +150,6 @@ export default class VegaModifier extends Modifier<VegaModifierArgs> {
     args: NamedArgs<VegaModifierArgs>
   ): Promise<void> {
     for (const name of Object.keys(args.data)) {
-      console.log('_populateData name', name, args.data[name]);
       this._vegaView.data(name, args.data[name]);
     }
 
