@@ -1,6 +1,6 @@
 {
   "name": "@opendatafit/ember-vega-modifier",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "The default blueprint for ember-cli addons.",
   "keywords": [
     "ember-addon"
@@ -40,12 +40,12 @@
     "vega-tooltip": "^0.28.0"
   },
   "devDependencies": {
-    "@types/ember": "^4.0.0",
     "@ember/optional-features": "^2.0.0",
     "@ember/test-helpers": "^2.7.0",
     "@embroider/test-setup": "^1.6.0",
     "@glimmer/component": "^1.1.2",
     "@glimmer/tracking": "^1.1.2",
+    "@types/ember": "^4.0.0",
     "@types/ember-qunit": "^5.0.0",
     "@types/ember-resolver": "^5.0.11",
     "@types/ember__application": "^4.0.0",
