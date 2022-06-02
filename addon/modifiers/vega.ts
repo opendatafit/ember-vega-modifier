@@ -112,7 +112,7 @@ export default class VegaModifier extends Modifier<VegaModifierArgs> {
     element: Element,
     args: NamedArgs<VegaModifierArgs>
   ): Promise<void> {
-    element.classList.add('vega-view-modifier');
+    element.classList.add('vega-modifier');
 
     let tooltipHandler = new VegaTooltip.Handler();
 
