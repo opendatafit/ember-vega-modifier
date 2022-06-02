@@ -1,5 +1,5 @@
 {
-  "name": "ember-vega-modifier",
+  "name": "@opendatafit/ember-vega-modifier",
   "version": "0.0.0",
   "description": "The default blueprint for ember-cli addons.",
   "keywords": [
