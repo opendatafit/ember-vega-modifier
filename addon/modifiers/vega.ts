@@ -1,5 +1,6 @@
 import Modifier, { ArgsFor, PositionalArgs, NamedArgs } from 'ember-modifier';
 import { registerDestructor } from '@ember/destroyable';
+import { next } from '@ember/runloop';
 
 import { isEmpty } from 'lodash';
 
@@ -58,6 +59,12 @@ export default class VegaModifier extends Modifier<VegaModifierArgs> {
       // Update data only
       // TODO: Handle changes to config
       await this._populateData(data);
+      if (isVisible) {
+        next(() => {
+          // TODO this is gross and i hate it
+          window.dispatchEvent(new Event('resize'));
+        });
+      }
     }
   }
 
@@ -100,13 +107,13 @@ export default class VegaModifier extends Modifier<VegaModifierArgs> {
     window.dispatchEvent(new Event('resize'));
   }
 
-  private async _populateData(
+  private _populateData(
     data: Record<string, Record<string, number | null>>,
-  ): Promise<void> {
+  ): Promise<Vega.View> {
     for (const name of Object.keys(data)) {
       this._vegaView.data(name, data[name]);
     }
 
-    await this._vegaView.runAsync();
+    return this._vegaView.runAsync();
   }
 }
