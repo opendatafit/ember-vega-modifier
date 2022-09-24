@@ -8,68 +8,20 @@ import * as VegaLite from 'vega-lite';
 import * as VegaTooltip from 'vega-tooltip';
 
 
-const DEFAULT_CONFIG: Vega.Config = {
-  background: '#fff',
-  arc: { fill: '#3e5c69' },
-  area: { fill: '#3e5c69' },
-  line: { stroke: '#3e5c69' },
-  path: { stroke: '#3e5c69' },
-  rect: { fill: '#3e5c69' },
-  shape: { stroke: '#3e5c69' },
-  symbol: { fill: '#3e5c69' },
-  axis: {
-    domainWidth: 0.5,
-    grid: true,
-    labelPadding: 2,
-    tickSize: 5,
-    tickWidth: 0.5,
-    titleFontWeight: 'normal',
-  },
-  axisBand: { grid: false },
-  axisX: { gridWidth: 0.2 },
-  axisY: { gridDash: [3], gridWidth: 0.4 },
-  legend: { labelFontSize: 11, padding: 1, symbolType: 'square' },
-  range: {
-    category: [
-      '#3e5c69',
-      '#6793a6',
-      '#182429',
-      '#0570b0',
-      '#3690c0',
-      '#74a9cf',
-      '#a6bddb',
-      '#e2ddf2',
-    ],
-  },
-};
+import { DEFAULT_CONFIG } from '../utils/default-config';
 
-
-interface VegaLiteArgs {
+interface VegaModifierArgs {
   Args: {
     Named: {
-      specType: 'vega-lite';
-      spec: VegaLite.TopLevelSpec;
+      specType: 'vega' | 'vega-lite';
+      spec: Vega.Spec | VegaLite.TopLevelSpec;
       data: Record<string, Record<string, number | null>>;
       config: Vega.Config;
+      isVisible: boolean;
     };
-    Positional: never;
+    Positional: [];
   }
 }
-
-interface VegaArgs {
-  Args: {
-    Named: {
-      specType: 'vega';
-      spec: Vega.Spec;
-      data: Record<string, Record<string, number | null>>;
-      config: Vega.Config;
-    };
-    Positional: never;
-  }
-}
-
-type VegaModifierArgs = VegaArgs | VegaLiteArgs;
-
 
 export default class VegaModifier extends Modifier<VegaModifierArgs> {
   private _vegaView!: Vega.View;
@@ -90,8 +42,8 @@ export default class VegaModifier extends Modifier<VegaModifierArgs> {
 
   async modify(
     element: Element,
-    positionalArgs: PositionalArgs<VegaModifierArgs>,
-    args: NamedArgs<VegaModifierArgs>
+    []: PositionalArgs<VegaModifierArgs>,
+    { specType, spec, data, config, isVisible }: NamedArgs<VegaModifierArgs>
   ) {
     if (!element) {
       throw new Error('Vega has no element');
@@ -99,39 +51,41 @@ export default class VegaModifier extends Modifier<VegaModifierArgs> {
 
     if (!this._vegaView) {
       // Create new Vega.View instance
-      await this._createView(element, args);
+      await this._createView(element, specType, spec, config);
 
-      await this._populateData(args);
+      await this._populateData(data);
     } else {
       // Update data only
       // TODO: Handle changes to config
-      await this._populateData(args);
+      await this._populateData(data);
     }
   }
 
   private async _createView(
     element: Element,
-    args: NamedArgs<VegaModifierArgs>
+    specType: 'vega' | 'vega-lite',
+    spec: Vega.Spec | VegaLite.TopLevelSpec,
+    config: Vega.Config,
   ): Promise<void> {
     element.classList.add('vega-modifier');
 
     let tooltipHandler = new VegaTooltip.Handler();
 
-    let config = {};
-    if (isEmpty(args.config)) {
-      config = DEFAULT_CONFIG;
+    let _config = {};
+    if (isEmpty(config)) {
+      _config = DEFAULT_CONFIG;
       } else {
-      config = args.config;
+      _config = config;
     }
 
-    let viewSpec = null;
-    if (args.specType === 'vega-lite') {
-      viewSpec = VegaLite.compile(args.spec).spec;
+    let _viewSpec: Vega.Spec;
+    if (specType === 'vega-lite') {
+      _viewSpec = VegaLite.compile(spec as VegaLite.TopLevelSpec).spec;
     } else {
-      viewSpec = args.spec
+      _viewSpec = spec as Vega.Spec; 
     }
 
-    this._vegaView = new Vega.View(Vega.parse(viewSpec, config), {
+    this._vegaView = new Vega.View(Vega.parse(_viewSpec, _config), {
       renderer: 'svg',
       container: element,
       hover: true,
@@ -147,10 +101,10 @@ export default class VegaModifier extends Modifier<VegaModifierArgs> {
   }
 
   private async _populateData(
-    args: NamedArgs<VegaModifierArgs>
+    data: Record<string, Record<string, number | null>>,
   ): Promise<void> {
-    for (const name of Object.keys(args.data)) {
-      this._vegaView.data(name, args.data[name]);
+    for (const name of Object.keys(data)) {
+      this._vegaView.data(name, data[name]);
     }
 
     await this._vegaView.runAsync();
