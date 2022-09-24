@@ -19,6 +19,7 @@ export default class Application extends Controller {
   @tracked specType: string;
   @tracked config: object;
   @tracked data: DataRecord;
+  @tracked isVisible: boolean;
 
   constructor() {
     super(...arguments);
@@ -27,14 +28,16 @@ export default class Application extends Controller {
     this.specType = SPEC_TYPE;
     this.config = CONFIG;
     this.data = DATA_1;
+
+    this.isVisible = false;
   }
 
   @action updateData() {
     this.data = DATA_2;
-    // TODO: Hack to workaround tracked property not being fired by this.data
-    // change
-    this.specType = '';
-    this.specType = 'vega';
+  }
+  
+  @action toggleVisibility() {
+    this.isVisible = !this.isVisible;
   }
 }
 

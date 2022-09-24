@@ -12,9 +12,30 @@
 </div>
 
 <div>
-  <button {{on "click" this.updateData}}>
+  <button type="button" {{on "click" this.updateData}}>
     Update data
   </button>
+</div>
+
+<br>
+<div>
+  <button type="button" {{on "click" this.toggleVisibility}}>
+    Toggle visibility
+  </button>
+</div>
+
+<div aria-hidden={{if this.isVisible "false" "true"}}>
+  <div
+    {{vega
+      specType=this.specType
+      spec=this.spec
+      data=this.data
+      config=this.config
+      isVisible=this.isVisible
+    }}
+    style="height: 100%; min-height: 400px; max-height: 100%;"
+  >
+  </div>
 </div>
 
 {{outlet}}
