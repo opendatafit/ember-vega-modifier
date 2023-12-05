@@ -13,7 +13,7 @@
 ## Installation
 
 ```
-ember install ember-vega-modifier
+ember install @opendatafit/ember-vega-modifier
 ```
 
 
